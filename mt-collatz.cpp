@@ -1,5 +1,5 @@
 #include <iostream>
-#include <sstream>
+#include <thread>
 using namespace std;
 int collatz(int n, int i = 0) {
     if (n == 1)
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     int histogram[HISTOGRAM_SIZE] = {};
 
     //Calculate collatz # for each number from 2 to N
-    //Increment collatz # frequency in historam array
+    //Increment collatz # frequency in histogram array
     for (int i = 2; i < N; i++)
         histogram[collatz(i)]++;
 
