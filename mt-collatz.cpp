@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #define MAX_THREADS 100
 #define HISTOGRAM_SIZE 1000
 using namespace std;
@@ -19,9 +20,15 @@ int main(int argc, char* argv[]) {
     int histogram[HISTOGRAM_SIZE] = {};
 
     int counter = 2;
+    mutex counter_mutex;
     auto record = [&]() {
-        while (counter <= N)
-            histogram[collatz(counter++)]++;    
+        while (true) {
+            lock_guard<mutex> lock(counter_mutex);
+            if (counter <= N)
+                histogram[collatz(counter++)]++;
+            else
+                return;
+        }
     };
 
     for (auto i = 0; i < T; i++)
@@ -36,8 +43,6 @@ int main(int argc, char* argv[]) {
         if (histogram[i] > 0)
             cout << i << ":" << histogram[i] << endl;
     }
-
-    //TODO: race condition fix
     
     return 0;
 }
