@@ -44,5 +44,8 @@ int main(int argc, char *argv[]) {
             cout << i << ":" << histogram[i] << endl;
     }
 
+    //TODO: new threads should be created when another finishes
+    //TODO: race condition fix
+
     return 0;
 }
