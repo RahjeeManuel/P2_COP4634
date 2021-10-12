@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <vector>
 using namespace std;
 int collatz(int n, int i = 0) {
     if (n == 1)
@@ -17,19 +18,31 @@ int main(int argc, char *argv[]) {
     //Create histogram
     const int HISTOGRAM_SIZE = 1000;
     int histogram[HISTOGRAM_SIZE] = {};
+    thread threads[T];
 
     //Calculate collatz # for each number from 2 to N
     //Increment collatz # frequency in histogram array
-    for (int i = 2; i < N; i++)
-        histogram[collatz(i)]++;
+    //Calculation of each collat # is given to a different thread
+    int counter = 2;
+    while (counter < N) {
+        for (auto i = 0; i < T; i++) {
+            if (counter > N)
+                break;
+            threads[i] = thread([&]() {
+                histogram[collatz(counter++)]++;
+            });
+        }
+        for (auto i = 0; i < T; i++) {
+            if (threads[i].joinable())
+                threads[i].join();
+        }
+    }
 
     //Print frequency of collatz #'s for frequencies > 0
-    for (unsigned int i = 0; i < HISTOGRAM_SIZE; i++) {
+    for (auto i = 0; i < HISTOGRAM_SIZE; i++) {
         if (histogram[i] > 0)
             cout << i << ":" << histogram[i] << endl;
     }
-
-    //TODO: Distribute the calculation of each collatz # to # of threads
 
     return 0;
 }

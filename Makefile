@@ -1,7 +1,7 @@
 OBJS = mt-collatz.o
 SOURCE = mt-collatz.cpp
 HEADER =
-OUT	= mt-collatz
+OUT = mt-collatz
 CC = g++
 FLAGS = -g -c -Wall
 LFLAGS = -pthread
