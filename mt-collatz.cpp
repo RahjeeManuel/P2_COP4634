@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <time.h>
 #define MAX_THREADS 100
 #define HISTOGRAM_SIZE 1000
 using namespace std;
@@ -41,8 +42,13 @@ int main(int argc, char* argv[]) {
 
     for (auto i = 0; i < HISTOGRAM_SIZE; i++) {
         if (histogram[i] > 0)
-            cout << i << ":" << histogram[i] << endl;
+            cout << i << "," << histogram[i] << endl;
     }
+
+    cerr << N << "," << T << "," << "elapsed_time" << endl;
     
+    //TODO: add clock_gettime(3);
+    //TODO: optional -nolock parameter?
+
     return 0;
 }
