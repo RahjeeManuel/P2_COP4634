@@ -4,8 +4,7 @@
 #include <time.h>
 #define MAX_THREADS 100
 #define HISTOGRAM_SIZE 1000
-#define BILLION 1000000000L;
-
+#define BILLION 1E9
 using namespace std;
 int collatz(int n, int i = 0) {
     if (n == 1)
@@ -56,15 +55,14 @@ int main(int argc, char* argv[]) {
         perror("clock gettime");
 	exit(EXIT_FAILURE);
     }
-    accu = (stop.tv_sec - start.tv_sec);
-    cout << accu << endl;
+    accu = (stop.tv_sec - start.tv_sec)+(stop.tv_nsec - start.tv_nsec)/BILLION;
 
     for (auto i = 0; i < HISTOGRAM_SIZE; i++) {
         if (histogram[i] > 0)
             cout << i << "," << histogram[i] << endl;
     }
 
-    cerr << N << "," << T << "," << "elapsed_time" << endl;
+    cerr << N << "," << T << "," << accu << endl;
     
     //TODO: add clock_gettime(3);
     //TODO: optional -nolock parameter?
