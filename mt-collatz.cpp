@@ -4,6 +4,8 @@
 #include <time.h>
 #define MAX_THREADS 100
 #define HISTOGRAM_SIZE 1000
+#define BILLION 1000000000L;
+
 using namespace std;
 int collatz(int n, int i = 0) {
     if (n == 1)
@@ -14,6 +16,7 @@ int collatz(int n, int i = 0) {
         return collatz(3 * n + 1, ++i);
 }
 int main(int argc, char* argv[]) {
+    
     const int N = argc >= 1 && argv[1] ? atoi(argv[1]) : 10000;
     const int T = argc >= 2 && argv[2] ? atoi(argv[2]) : 8;
 
@@ -32,13 +35,29 @@ int main(int argc, char* argv[]) {
         }
     };
 
-    for (auto i = 0; i < T; i++)
+    struct timespec start, stop;
+    double accu;
+
+    if(clock_gettime(CLOCK_REALTIME, &start) == -1){
+        perror("clock gettime");
+	exit(EXIT_FAILURE);
+    }
+
+    for (auto i = 0; i < T; i++){
         threads[i] = thread(record);
+    }
 
     for (auto i = 0; i < T; i++) {
         if (threads[i].joinable())
             threads[i].join();
     }
+
+    if(clock_gettime(CLOCK_REALTIME, &stop) == -1){
+        perror("clock gettime");
+	exit(EXIT_FAILURE);
+    }
+    accu = (stop.tv_sec - start.tv_sec);
+    cout << accu << endl;
 
     for (auto i = 0; i < HISTOGRAM_SIZE; i++) {
         if (histogram[i] > 0)
