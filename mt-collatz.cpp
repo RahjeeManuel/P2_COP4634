@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 	exit(EXIT_FAILURE);
     }
     accu = (stop.tv_sec - start.tv_sec)+(stop.tv_nsec - start.tv_nsec)/BILLION;
-
+    
     for (auto i = 0; i < HISTOGRAM_SIZE; i++) {
         if (histogram[i] > 0)
             cout << i << "," << histogram[i] << endl;
@@ -64,6 +64,8 @@ int main(int argc, char* argv[]) {
 
     cerr << N << "," << T << "," << accu << endl;
     
+
+
     //TODO: add clock_gettime(3);
     //TODO: optional -nolock parameter?
 
