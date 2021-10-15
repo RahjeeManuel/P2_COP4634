@@ -15,9 +15,9 @@ int collatz(int n, int i = 0) {
         return collatz(3 * n + 1, ++i);
 }
 int main(int argc, char* argv[]) {
-    
     const int N = argc >= 1 && argv[1] ? atoi(argv[1]) : 10000;
     const int T = argc >= 2 && argv[2] ? atoi(argv[2]) : 8;
+    const bool NO_LOCK = argc >= 3 && argv[3] ? string(argv[3]) == string("-nolock") : false;
 
     thread threads[MAX_THREADS];
     int histogram[HISTOGRAM_SIZE] = {};
@@ -26,21 +26,25 @@ int main(int argc, char* argv[]) {
     mutex counter_mutex;
     auto record = [&]() {
         while (true) {
-            lock_guard<mutex> lock(counter_mutex);
-            if (counter <= N)
-                histogram[collatz(counter++)]++;
-            else
-                return;
+	    if (NO_LOCK == true) {
+	        if (counter <= N)
+	            histogram[collatz(counter++)]++;
+	        else
+	            return;
+	    } else {
+                lock_guard<mutex> lock(counter_mutex);
+                if (counter <= N)
+                    histogram[collatz(counter++)]++;
+                else
+                    return;
+	    }
         }
     };
 
     struct timespec start, stop;
-    double accu;
+    double elapsed_time;
 
-    if(clock_gettime(CLOCK_REALTIME, &start) == -1){
-        perror("clock gettime");
-	exit(EXIT_FAILURE);
-    }
+    clock_gettime(CLOCK_REALTIME, &start);
 
     for (auto i = 0; i < T; i++){
         threads[i] = thread(record);
@@ -51,21 +55,15 @@ int main(int argc, char* argv[]) {
             threads[i].join();
     }
 
-    if(clock_gettime(CLOCK_REALTIME, &stop) == -1){
-        perror("clock gettime");
-	exit(EXIT_FAILURE);
-    }
-    accu = (stop.tv_sec - start.tv_sec)+(stop.tv_nsec - start.tv_nsec)/BILLION;
+    clock_gettime(CLOCK_REALTIME, &stop);
+    elapsed_time = (stop.tv_sec - start.tv_sec) + (stop.tv_nsec - start.tv_nsec) / BILLION;
 
     for (auto i = 0; i < HISTOGRAM_SIZE; i++) {
         if (histogram[i] > 0)
             cout << i << "," << histogram[i] << endl;
     }
 
-    cerr << N << "," << T << "," << accu << endl;
-    
-    //TODO: add clock_gettime(3);
-    //TODO: optional -nolock parameter?
+    cerr << N << "," << T << "," << elapsed_time << endl;
 
     return 0;
 }
