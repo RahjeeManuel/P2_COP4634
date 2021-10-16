@@ -6,13 +6,16 @@
 #define HISTOGRAM_SIZE 1000
 #define BILLION 1E9
 using namespace std;
-int collatz(int n, int i = 0) {
-    if (n == 1)
-        return i;
-    else if (n % 2 == 0)
-        return collatz(n / 2, ++i);
-    else
-        return collatz(3 * n + 1, ++i);
+int collatz(long n) {
+    int i = 0;
+    while (n != 1) {
+        if (n % 2 == 0)
+            n /= 2;
+        else
+            n = (3 * n) + 1;
+        i++;
+    }
+    return i;
 }
 int main(int argc, char* argv[]) {
     const int N = argc >= 1 && argv[1] ? atoi(argv[1]) : 10000;
@@ -21,7 +24,7 @@ int main(int argc, char* argv[]) {
 
     thread threads[MAX_THREADS];
     int histogram[HISTOGRAM_SIZE] = {};
-
+    
     int counter = 2;
     mutex counter_mutex;
     auto record = [&]() {
@@ -62,6 +65,6 @@ int main(int argc, char* argv[]) {
         cout << i << "," << histogram[i] << endl;
 
     cerr << N << "," << T << "," << elapsed_time << endl;
-
+    
     return 0;
 }
