@@ -26,18 +26,18 @@ int main(int argc, char* argv[]) {
     mutex counter_mutex;
     auto record = [&]() {
         while (true) {
-	    if (NO_LOCK == true) {
-	        if (counter <= N)
-	            histogram[collatz(counter++)]++;
-	        else
-	            return;
-	    } else {
-                lock_guard<mutex> lock(counter_mutex);
-                if (counter <= N)
+            if (NO_LOCK == true) {
+                if (counter < N)
                     histogram[collatz(counter++)]++;
                 else
                     return;
-	    }
+            } else {
+                lock_guard<mutex> lock(counter_mutex);
+                if (counter < N)
+                    histogram[collatz(counter++)]++;
+                else
+                    return;
+            }
         }
     };
 
@@ -58,10 +58,8 @@ int main(int argc, char* argv[]) {
     clock_gettime(CLOCK_REALTIME, &stop);
     elapsed_time = (stop.tv_sec - start.tv_sec) + (stop.tv_nsec - start.tv_nsec) / BILLION;
 
-    for (auto i = 0; i < HISTOGRAM_SIZE; i++) {
-        if (histogram[i] > 0)
-            cout << i << "," << histogram[i] << endl;
-    }
+    for (auto i = 0; i < HISTOGRAM_SIZE; i++)
+        cout << i << "," << histogram[i] << endl;
 
     cerr << N << "," << T << "," << elapsed_time << endl;
 
