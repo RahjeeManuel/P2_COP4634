@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
                 else
                     return;
             } else {
-                lock_guard<mutex> lock(counter_mutex);
+                lock_guard<mutex> lock(counter_mutex);  //lock_guard locks all code in the same scope. this unlocks when leaving its scope
                 if (counter < N)
                     histogram[collatz(counter++)]++;
                 else
