@@ -76,10 +76,10 @@ int main(int argc, char* argv[]) {
 
     //Print histogram array to cout
     for (auto i = 0; i < HISTOGRAM_SIZE; i++)
-        cout << i << "," << histogram[i] << endl;
+        cerr << i << "," << histogram[i] << endl;
 
     //Print elapsed_time to cerr
-    cerr << N << "," << T << "," << elapsed_time << endl;
+    //cerr << N << "," << T << "," << elapsed_time << endl;
     
     return 0;
 }
